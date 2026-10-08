@@ -21,6 +21,7 @@ if (process.env.SESSION_SECRET.length < 32) {
 const app = express();
 const port = Number(process.env.PORT || 3000);
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
+let databaseInitialization;
 const documentTypes = new Set(['quotation', 'invoice', 'challan', 'service-report']);
 const typeCodes = {
   quotation: 'QUO',
@@ -32,13 +33,45 @@ const typeCodes = {
 app.disable('x-powered-by');
 app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : false);
 app.use(express.json({ limit: '100kb' }));
+app.use(express.static(__dirname));
+
+async function initializeDatabase() {
+  if (!databaseInitialization) {
+    databaseInitialization = (async () => {
+      await mongoClient.connect();
+      const database = mongoClient.db();
+      app.locals.documents = database.collection('documents');
+      app.locals.companies = database.collection('companies');
+      app.locals.counters = database.collection('documentCounters');
+      await Promise.all([
+        app.locals.documents.createIndex({ type: 1, number: 1 }, { unique: true }),
+        app.locals.documents.createIndex({ createdAt: -1 }),
+        app.locals.companies.createIndex({ normalizedName: 1 }, { unique: true }),
+      ]);
+    })().catch((error) => {
+      databaseInitialization = undefined;
+      throw error;
+    });
+  }
+  return databaseInitialization;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await initializeDatabase();
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.use(session({
   name: 've-admin-session',
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI,
+    client: mongoClient,
     collectionName: 'adminSessions',
     ttl: 60 * 60 * 8,
   }),
@@ -46,7 +79,7 @@ app.use(session({
     httpOnly: true,
     sameSite: 'strict',
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 8 * 60 * 60 * 1000,
+    maxAge: 60 * 60 * 8 * 1000,
   },
 }));
 
@@ -367,29 +400,24 @@ app.put('/api/documents/:id', requireAdmin, async (req, res, next) => {
   }
 });
 
-app.use(express.static(__dirname));
-
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   console.error('Request failed:', error);
   return res.status(500).json({ error: 'The request could not be completed. Please try again.' });
 });
 
-async function start() {
-  await mongoClient.connect();
-  const database = mongoClient.db();
-  app.locals.documents = database.collection('documents');
-  app.locals.companies = database.collection('companies');
-  app.locals.counters = database.collection('documentCounters');
-  await app.locals.documents.createIndex({ type: 1, number: 1 }, { unique: true });
-  await app.locals.documents.createIndex({ createdAt: -1 });
-  await app.locals.companies.createIndex({ normalizedName: 1 }, { unique: true });
+async function startLocalServer() {
+  await initializeDatabase();
   app.listen(port, () => {
     console.log(`Veerbhadra Engineers is listening on port ${port}`);
   });
 }
 
-start().catch((error) => {
-  console.error('Could not start the application:', error);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  startLocalServer().catch((error) => {
+    console.error('Could not start the application:', error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = app;
