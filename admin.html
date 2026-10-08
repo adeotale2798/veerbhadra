@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#263783">
+  <title>Admin | Veerbhadra Engineers</title>
+  <link rel="icon" href="assets/favicon-32x32.png">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <a class="brand" href="/">
+        <img src="logo.jpg" alt="Veerbhadra Engineers logo">
+        <span><strong>VEERBHADRA</strong><strong>ENGINEERS</strong><small>Your Vision, Our Execution</small></span>
+      </a>
+      <p class="eyebrow">ADMINISTRATION</p>
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to manage business documents.</p>
+      <label>Admin ID<input name="username" type="text" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="button button-primary full-width" type="submit">Sign in</button>
+      <p class="form-message" id="login-message" role="alert"></p>
+      <a class="back-link" href="/">← Back to website</a>
+    </form>
+  </div>
+
+  <div id="admin-app" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/">
+        <img src="logo.jpg" alt="Veerbhadra Engineers logo">
+        <span><strong>VEERBHADRA</strong><strong>ENGINEERS</strong><small>DOCUMENT DESK</small></span>
+      </a>
+      <p class="sidebar-label">WORKSPACE</p>
+      <button class="nav-button active" type="button" data-view="dashboard"><span>⌂</span> Overview</button>
+      <p class="sidebar-label">CREATE DOCUMENT</p>
+      <button class="nav-button" type="button" data-create="quotation"><span>＋</span> Quotation</button>
+      <button class="nav-button" type="button" data-create="invoice"><span>＋</span> Invoice</button>
+      <button class="nav-button" type="button" data-create="challan"><span>＋</span> Delivery challan</button>
+      <button class="nav-button" type="button" data-create="service-report"><span>＋</span> Service report</button>
+      <div class="sidebar-bottom">
+        <a href="/">← View public website</a>
+        <button class="button button-quiet full-width" id="logout-button" type="button">Sign out</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow">VEERBHADRA ENGINEERS</p><h1 id="page-title">Document desk</h1></div>
+        <span class="secure-badge"><span></span> Secure workspace</span>
+      </header>
+      <div id="app-message" class="app-message" role="status"></div>
+
+      <section id="dashboard-view">
+        <div class="welcome-card">
+          <div><p class="eyebrow">BUSINESS DOCUMENTS</p><h2>Your paperwork, in one place.</h2><p>Create branded documents, keep records in your database, and print or save a PDF whenever you need it.</p></div>
+          <img src="logo.jpg" alt="">
+        </div>
+        <div class="section-heading"><div><p class="eyebrow">QUICK ACTIONS</p><h2>Create a document</h2></div></div>
+        <div class="document-cards">
+          <button class="document-card" type="button" data-create="quotation"><span class="card-icon">Q</span><strong>Quotation</strong><small>Estimate and scope of work</small><span class="card-arrow">Create →</span></button>
+          <button class="document-card" type="button" data-create="invoice"><span class="card-icon">I</span><strong>Invoice</strong><small>Tax invoice and payment terms</small><span class="card-arrow">Create →</span></button>
+          <button class="document-card" type="button" data-create="challan"><span class="card-icon">D</span><strong>Delivery challan</strong><small>Goods and delivery details</small><span class="card-arrow">Create →</span></button>
+          <button class="document-card" type="button" data-create="service-report"><span class="card-icon">S</span><strong>Service report</strong><small>Visit, work, and customer sign-off</small><span class="card-arrow">Create →</span></button>
+        </div>
+        <section class="records-section">
+          <div class="section-heading"><div><p class="eyebrow">SAVED RECORDS</p><h2>Recent documents</h2></div><button class="text-button" id="refresh-documents" type="button">Refresh</button></div>
+          <div class="filter-row">
+            <label class="sr-only" for="document-filter">Filter saved records</label>
+            <select id="document-filter"><option value="">All document types</option><option value="quotation">Quotations</option><option value="invoice">Invoices</option><option value="challan">Delivery challans</option><option value="service-report">Service reports</option></select>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Document no.</th><th>Type</th><th>Client</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="document-list"></tbody></table></div>
+          <p class="empty-state" id="empty-documents" hidden>No saved documents yet. Create one to get started.</p>
+        </section>
+      </section>
+
+      <section id="editor-view" hidden>
+        <div class="editor-heading paper-toolbar">
+          <button class="text-button" id="back-to-dashboard" type="button">← All documents</button>
+          <div class="editor-actions"><button class="button button-outline" id="add-row-button" type="button">＋ Add line</button><button class="button button-outline" id="preview-document-button" type="button">Preview</button><button class="button button-outline" id="print-draft-button" type="button">Print / PDF</button><button class="button button-primary" id="save-button" type="submit" form="document-form">Save document</button></div>
+        </div>
+        <form id="document-form" class="document-form">
+          <input type="hidden" name="type">
+          <div id="document-editor-paper" class="print-document editable-document"></div>
+        </form>
+      </section>
+
+      <section id="preview-view" hidden>
+        <div id="quotation-workflow" class="quotation-workflow" hidden>
+          <div><strong>Quotation approval</strong><span id="quotation-approval-status"></span></div>
+          <button class="button button-outline" id="toggle-quotation-approval" type="button"></button>
+          <div id="quotation-followup-actions" class="quotation-followup-actions" hidden>
+            <span>Create a follow-up document from this approved quotation:</span>
+            <button class="button button-outline" type="button" data-from-quotation="invoice">Create invoice</button>
+            <button class="button button-outline" type="button" data-from-quotation="challan">Create delivery challan</button>
+            <button class="button button-outline" type="button" data-from-quotation="service-report">Create service report</button>
+          </div>
+        </div>
+        <div class="editor-heading preview-controls"><button class="text-button" id="close-preview" type="button">← Back</button><div class="editor-actions"><button class="button button-outline" id="edit-saved-button" type="button" hidden>Edit document</button><button class="button button-primary" id="print-button" type="button">Print / Save as PDF</button></div></div>
+        <div id="saved-print-document" class="print-document"></div>
+      </section>
+    </main>
+  </div>
+  <script src="admin.js" defer></script>
+</body>
+</html>
