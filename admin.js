@@ -354,8 +354,8 @@ function editDocumentPaper(type, record = {}) {
       ['number', 'Invoice No.', record.number || 'Assigned on save'],
       ['date', 'Dated', record.date || localDate(), 'date'],
       ['dueDate', 'Due Date', record.dueDate, 'date'],
-      ['orderNumber', 'Buyer’s Order No.', record.orderNumber],
-      ['paymentTerms', 'Mode / Terms of Payment', record.paymentTerms],
+      ['orderNumber', 'P.O. Reference', record.orderNumber],
+      ['paymentTerms', 'Payment Terms', record.paymentTerms],
     ],
     challan: [
       ['number', 'Challan No.', record.number || 'Assigned on save'],
@@ -866,9 +866,8 @@ function buildPrintDocument(record) {
       ['Project / Site', record.projectName], ['Approval Status', record.approvalStatus === 'approved' ? 'Approved' : record.approvalStatus === 'rejected' ? 'Rejected' : 'Pending approval'],
     ],
     invoice: [
-      ['Invoice No.', record.number], ['Invoice Date', displayDate(record.date)],
-      ['Due Date', displayDate(record.dueDate)], ['Buyer’s Order No.', record.orderNumber],
-      ['Payment Terms', record.paymentTerms], ['Reference Quotation', record.sourceQuotationNumber],
+      ['Invoice No.', record.number], ['Due Date', displayDate(record.dueDate)],
+      ['P.O. Reference', record.orderNumber], ['Payment Terms', record.paymentTerms],
     ],
     challan: [
       ['Challan No.', record.number], ['Challan Date', displayDate(record.date)],
@@ -913,7 +912,7 @@ function buildPrintDocument(record) {
   const customer = type === 'challan'
       ? `<h3 class="doc-section-title">BILLING, DELIVERY &amp; CONTACT DETAILS</h3><div class="challan-address-grid"><div><strong>Billing Address</strong><span>${escapeHtml(client.name)}${client.address ? `\n${escapeHtml(client.address)}` : ''}${client.city ? `\n${escapeHtml(client.city)}` : ''}${client.pan ? `\nPAN: ${escapeHtml(client.pan)}` : ''}${client.gst ? `\nGST No.: ${escapeHtml(client.gst)}` : ''}</span></div><div><strong>Delivery Address</strong><span>${escapeHtml(record.deliveryName || client.name)}${record.deliveryAt ? `\n${escapeHtml(record.deliveryAt)}` : ''}</span></div><div><strong>Contact Details</strong><span>${escapeHtml(client.contactPerson)}${client.phone ? `\n${escapeHtml(client.phone)}` : ''}${client.email ? `\n${escapeHtml(client.email)}` : ''}</span></div></div>`
       : type === 'invoice'
-        ? `<div class="invoice-party-grid"><section><h3 class="doc-section-title">BILL TO</h3>${field('Customer Name', client.name)}${field('Address', client.address, true)}${field('City / State / PIN', client.city)}${field('Contact Person', client.contactPerson)}${field('Phone', client.phone)}${field('Email', client.email)}${field('GST No.', client.gst)}${field('PAN', client.pan)}</section><section><h3 class="doc-section-title">SHIP TO</h3>${field('Customer Name', record.shipName || client.name)}${field('Address', record.shipAddress || client.address, true)}${field('GST No.', record.shipGst || client.gst)}</section></div>`
+        ? `<div class="invoice-party-grid"><section><h3 class="doc-section-title">BILL TO</h3>${field('Customer Name', client.name)}${field('Address', client.address, true)}${client.city ? field('City / State / PIN', client.city) : ''}${client.contactPerson ? field('Contact Person', client.contactPerson) : ''}${client.phone ? field('Phone', client.phone) : ''}${client.email ? field('Email', client.email) : ''}${field('GST No.', client.gst)}${client.pan ? field('PAN', client.pan) : ''}</section><section><h3 class="doc-section-title">SHIP TO</h3>${field('Customer Name', record.shipName || client.name)}${field('Address', record.shipAddress || client.address, true)}${record.shipGst || client.gst ? field('GST No.', record.shipGst || client.gst) : ''}</section></div>`
         : type === 'service-report'
           ? `<h3 class="doc-section-title">CUSTOMER &amp; EQUIPMENT DETAILS</h3><div class="doc-client-grid">${field('Customer Name', client.name)}${field('Project / Site', record.siteName)}${field('Machine / Equipment', record.equipment)}${field('Service No. / ID', record.serviceNumber)}${field('Address', client.address, true)}${field('City / State / PIN', client.city)}${field('Contact Person', client.contactPerson)}${field('Phone', client.phone)}${field('Email', client.email)}${field('Installation Date', displayDate(record.installationDate))}</div>`
           : `<h3 class="doc-section-title">CLIENT DETAILS</h3><div class="doc-client-grid">${field('Client / Company Name', client.name)}${field('Contact Person', client.contactPerson)}${field('Address', client.address, true)}${field('City / State / PIN', client.city)}${field('Phone', client.phone)}${field('Email', client.email)}${field('GST No. (Client)', client.gst)}${field('PAN (Client)', client.pan)}</div>`;
@@ -2122,7 +2121,12 @@ async function printDocument() {
   }
   const printableNumber = (previewRecord.number || 'draft').replaceAll('/', '-');
   const originalTitle = document.title;
-  const restoreTitle = () => { document.title = originalTitle; };
+  const pageSettings = document.createElement('style');
+  pageSettings.textContent = '@page { size: A4 portrait; margin: 0; }';
+  const restoreTitle = () => {
+    document.title = originalTitle;
+    pageSettings.remove();
+  };
   document.title = `Veerbhadra Engineers - ${printableNumber}`;
   window.addEventListener('afterprint', restoreTitle, { once: true });
   try {
@@ -2144,6 +2148,7 @@ async function printDocument() {
       await image.decode();
       if (!image.naturalWidth) throw new Error('The document logo could not be decoded.');
     }));
+    document.head.append(pageSettings);
     window.print();
     announce('Print dialog closed. If you chose Save as PDF, check your browser downloads for the document.');
   } catch (error) {
