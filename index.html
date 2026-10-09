@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Veerbhadra Engineers | Industrial Services & Engineering Consultancy</title>
-  <link rel="stylesheet" href="tailwind.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -27,127 +27,6 @@
     animation: marquee 30s linear infinite;
   }
 
-  :root {
-    color-scheme: light;
-    scroll-padding-top: 88px;
-    --site-navy: #172554;
-    --site-blue: #1e3a8a;
-    --site-gold: #f0b323;
-  }
-
-  body { overflow-x: clip; color: #1f2937; }
-  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-    outline: 3px solid var(--site-gold);
-    outline-offset: 3px;
-  }
-
-  body > header {
-    border-bottom: 1px solid #e5eaf2;
-    background: #ffffffed;
-    box-shadow: 0 5px 24px #1725540a;
-    backdrop-filter: blur(14px);
-  }
-
-  body > header > div { min-height: 76px; }
-  body > header a[href="#contact"]:last-child { box-shadow: 0 5px 14px #d99a1b35; }
-
-  body > section.relative.bg-slate-900 {
-    isolation: isolate;
-    overflow: hidden;
-    background:
-      radial-gradient(ellipse at 82% 25%, #3554a855, transparent 34%),
-      radial-gradient(ellipse at 4% 100%, #273a7466, transparent 34%),
-      linear-gradient(125deg, #111b39, #172554 58%, #1f326c);
-  }
-
-  body > section.relative.bg-slate-900::after {
-    position: absolute;
-    top: -145px;
-    right: -95px;
-    z-index: -1;
-    width: 380px;
-    aspect-ratio: 1;
-    border: 1px solid #ffffff17;
-    border-radius: 50%;
-    box-shadow: 0 0 0 36px #ffffff08, 0 0 0 78px #ffffff06;
-    content: "";
-    pointer-events: none;
-  }
-
-  body > section.relative.bg-slate-900 .grid.grid-cols-2 > div {
-    border-color: #ffffff20;
-    background: #ffffff0b;
-    box-shadow: 0 10px 30px #0b143822;
-    transition: transform .18s ease, border-color .18s ease, background-color .18s ease;
-  }
-  body > section.relative.bg-slate-900 .grid.grid-cols-2 > div:hover {
-    transform: translateY(-3px);
-    border-color: #e9b74177;
-    background: #ffffff10;
-  }
-
-  #about .grid > div, #compliance .grid > div {
-    border-color: #e5eaf2;
-    box-shadow: 0 8px 24px #1725540a;
-    transition: transform .18s ease, box-shadow .18s ease;
-  }
-  #about .grid > div:hover, #compliance .grid > div:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px #17255412;
-  }
-
-  #services .animate-marquee > div {
-    border-color: #e1e6ef;
-    border-radius: 14px;
-    box-shadow: 0 10px 28px #17255412;
-  }
-  #services .animate-marquee img { background: #e8edf5; }
-  #services .animate-marquee a { transition: background-color .16s ease, transform .16s ease; }
-  #services .animate-marquee a:hover { transform: translateY(-1px); }
-
-  #contact > div > .grid > div:last-child {
-    border-radius: 14px;
-    box-shadow: 0 16px 40px #080f222e;
-  }
-  #contact input, #contact select, #contact textarea {
-    min-height: 44px;
-    border-radius: 8px;
-  }
-  #contact textarea { min-height: 96px; }
-  #contact button[type="submit"] { min-height: 48px; border-radius: 8px; box-shadow: 0 7px 18px #05966930; }
-
-  @media (max-width: 640px) {
-    :root { scroll-padding-top: 16px; }
-    body > header > div { min-height: 66px; gap: 8px; padding-inline: 12px; }
-    body > header > div > a:first-child { min-width: 0; gap: 8px; }
-    body > header > div > a:first-child > div:first-child { width: 44px; height: 44px; flex: 0 0 44px; }
-    body > header > div > a:first-child > div:last-child span { font-size: 14px; }
-    body > header a[href="#contact"]:last-child { flex: 0 0 auto; padding: 9px 10px; font-size: 11px; white-space: nowrap; }
-    body > header a[href="#contact"]:last-child i { margin-left: 5px; }
-    body > section.relative.bg-slate-900 { padding-block: 56px; }
-    body > section.relative.bg-slate-900::after { top: -220px; right: -225px; width: 330px; }
-    #about, #services, #compliance, #contact { padding-block: 52px; }
-    #about .grid { gap: 12px; }
-    #about .grid > div { padding: 20px; }
-    #services .animate-marquee { animation-duration: 42s; }
-    #services .animate-marquee > div { width: 17rem; }
-    #contact > div > .grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-    #contact > div > .grid > div { min-width: 0; }
-    #contact .space-y-4 { overflow-wrap: anywhere; }
-  }
-
-  @media (max-width: 360px) {
-    body > header > div > a:first-child > div:first-child { width: 38px; height: 38px; flex-basis: 38px; }
-    body > header > div > a:first-child > div:last-child span { font-size: 12px; }
-    body > header a[href="#contact"]:last-child { padding: 8px; font-size: 10px; }
-    body > header a[href="#contact"]:last-child i { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-    #services .relative.w-full.overflow-hidden.group { overflow-x: auto; }
-    #services .animate-marquee { animation: none !important; }
-  }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-800 smooth-scroll">
@@ -175,7 +54,7 @@
       </nav>
 
       <!-- CTA -->
-      <a href="#contact" class="flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg transition shadow-sm text-sm">
+      <a href="#contact" class="hidden sm:inline-flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg transition shadow-sm text-sm">
         Request Quote <i class="fa-solid fa-arrow-right ml-2"></i>
       </a>
     </div>
