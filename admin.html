@@ -10,15 +10,31 @@
 </head>
 <body>
   <div id="login-screen" class="login-screen">
+    <section class="login-story" aria-label="Veerbhadra Engineers services">
+      <a class="login-story-brand" href="/">
+        <img src="logo.jpg" alt="Veerbhadra Engineers">
+        <span><strong>VEERBHADRA</strong><strong>ENGINEERS</strong></span>
+      </a>
+      <div class="login-story-copy">
+        <p class="eyebrow">INDUSTRIAL ENGINEERING · PUNE, INDIA</p>
+        <h1>Keeping industry<br>moving forward.</h1>
+        <p>Reliable engineering, maintenance and infrastructure services—managed with the same care behind every document.</p>
+        <div class="login-service-list">
+          <span>Electrical maintenance</span><span>Solar &amp; HVAC solutions</span>
+          <span>Industrial fabrication</span><span>Engineering services</span>
+        </div>
+      </div>
+      <div class="login-story-footer">Your Vision, Our Execution <span>•</span> Secure document desk</div>
+    </section>
     <form id="login-form" class="login-card">
       <a class="brand" href="/">
         <img src="logo.jpg" alt="Veerbhadra Engineers logo">
         <span><strong>VEERBHADRA</strong><strong>ENGINEERS</strong><small>Your Vision, Our Execution</small></span>
       </a>
       <p class="eyebrow">ADMINISTRATION</p>
-      <h1>Welcome back</h1>
+      <h2>Welcome back</h2>
       <p class="muted">Sign in to manage business documents.</p>
-      <label>Admin ID<input name="username" type="text" autocomplete="username" required></label>
+      <label>Admin ID<input name="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required></label>
       <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
       <button class="button button-primary full-width" type="submit">Sign in</button>
       <p class="form-message" id="login-message" role="alert"></p>
@@ -27,6 +43,14 @@
   </div>
 
   <div id="admin-app" class="app-shell" hidden>
+    <header class="topbar">
+      <a class="mobile-header-brand" href="/" aria-label="Veerbhadra Engineers home">
+        <img src="logo.jpg" alt="">
+        <strong>VEERBHADRA ENGINEERS</strong>
+      </a>
+      <div><p class="eyebrow">VEERBHADRA ENGINEERS</p><h1 id="page-title">Document desk</h1></div>
+      <span class="secure-badge"><span></span> Secure workspace</span>
+    </header>
     <aside class="sidebar">
       <a class="brand" href="/">
         <img src="logo.jpg" alt="Veerbhadra Engineers logo">
@@ -34,6 +58,7 @@
       </a>
       <p class="sidebar-label">WORKSPACE</p>
       <button class="nav-button active" type="button" data-view="dashboard"><span>⌂</span> Overview</button>
+      <button class="nav-button" type="button" data-view="finance"><span>₹</span> Business finance</button>
       <p class="sidebar-label">CREATE DOCUMENT</p>
       <button class="nav-button" type="button" data-create="quotation"><span>＋</span> Quotation</button>
       <button class="nav-button" type="button" data-create="invoice"><span>＋</span> Invoice</button>
@@ -46,13 +71,12 @@
     </aside>
 
     <main class="main-content">
-      <header class="topbar">
-        <div><p class="eyebrow">VEERBHADRA ENGINEERS</p><h1 id="page-title">Document desk</h1></div>
-        <span class="secure-badge"><span></span> Secure workspace</span>
-      </header>
-      <div id="app-message" class="app-message" role="status"></div>
+      <div id="app-message" class="app-message" role="status" aria-live="polite" aria-atomic="true" hidden>
+        <span class="toast-icon" aria-hidden="true"></span><span class="toast-message"></span>
+      </div>
 
       <section id="dashboard-view">
+        <div id="payment-reminder-banner" class="payment-reminder-banner" hidden></div>
         <div class="welcome-card">
           <div><p class="eyebrow">BUSINESS DOCUMENTS</p><h2>Your paperwork, in one place.</h2><p>Create branded documents, keep records in your database, and print or save a PDF whenever you need it.</p></div>
           <img src="logo.jpg" alt="">
@@ -65,13 +89,72 @@
           <button class="document-card" type="button" data-create="service-report"><span class="card-icon">S</span><strong>Service report</strong><small>Visit, work, and customer sign-off</small><span class="card-arrow">Create →</span></button>
         </div>
         <section class="records-section">
-          <div class="section-heading"><div><p class="eyebrow">SAVED RECORDS</p><h2>Recent documents</h2></div><button class="text-button" id="refresh-documents" type="button">Refresh</button></div>
+          <div class="section-heading"><div><p class="eyebrow">SAVED RECORDS</p><h2>Recent documents</h2></div><button class="button button-outline refresh-button" id="refresh-documents" type="button"><svg class="refresh-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 1 1-2.35-5.65L20 8M20 4v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Refresh</span></button></div>
           <div class="filter-row">
             <label class="sr-only" for="document-filter">Filter saved records</label>
             <select id="document-filter"><option value="">All document types</option><option value="quotation">Quotations</option><option value="invoice">Invoices</option><option value="challan">Delivery challans</option><option value="service-report">Service reports</option></select>
+            <label class="sr-only" for="invoice-payment-filter">Filter invoices by payment status</label>
+            <select id="invoice-payment-filter" hidden><option value="">All payment statuses</option><option value="unpaid">Unpaid</option><option value="partial">Partially paid</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select>
           </div>
           <div class="table-wrap"><table><thead><tr><th>Document no.</th><th>Type</th><th>Client</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="document-list"></tbody></table></div>
           <p class="empty-state" id="empty-documents" hidden>No saved documents yet. Create one to get started.</p>
+        </section>
+      </section>
+
+      <section id="finance-view" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">BUSINESS FINANCE</p><h2>Invoice income, expenses &amp; profit</h2></div>
+          <div class="finance-heading-actions">
+            <button class="button button-outline" id="export-finance" type="button" title="Download invoice payments and expenses as a CSV file"><svg class="export-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Download finance CSV</span></button>
+            <button class="button button-outline refresh-button" id="refresh-finance" type="button"><svg class="refresh-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M20 11a8 8 0 1 1-2.35-5.65L20 8M20 4v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Refresh</span></button>
+          </div>
+        </div>
+        <div class="finance-metrics">
+          <article class="finance-card"><span>Paid invoice income</span><strong id="finance-income">₹0.00</strong><small id="finance-paid-count">0 paid invoices</small></article>
+          <article class="finance-card"><span>Recorded expenses</span><strong id="finance-expenses">₹0.00</strong><small id="finance-expense-count">0 expense entries</small></article>
+          <article class="finance-card"><span>Net profit</span><strong id="finance-profit">₹0.00</strong><small>Paid income less expenses</small></article>
+          <article class="finance-card"><span>Outstanding invoices</span><strong id="finance-outstanding">₹0.00</strong><small id="finance-unpaid-count">0 unpaid · 0 partially paid</small></article>
+        </div>
+        <div class="finance-layout">
+          <section class="form-card finance-panel">
+            <div class="section-heading"><div><p class="eyebrow">CASH FLOW</p><h2>Monthly income, expenses &amp; profit</h2></div></div>
+            <div id="finance-chart" class="finance-chart" aria-label="Monthly invoice income, expenses and profit chart"></div>
+            <div class="finance-chart-legend"><span><i class="income"></i>Income</span><span><i class="expenses"></i>Expenses</span><span><i class="profit"></i>Profit</span><span><i class="loss"></i>Loss</span></div>
+          </section>
+          <section class="form-card finance-panel">
+            <div class="section-heading"><div><p class="eyebrow">REMINDER SETTINGS</p><h2>Unpaid invoice follow-up</h2></div></div>
+            <form id="reminder-settings-form" class="reminder-settings">
+              <label for="reminder-days">Remind me after</label>
+              <input id="reminder-days" name="reminderDays" type="number" min="1" max="90" step="1" required>
+              <span>days from invoice creation</span>
+              <button class="button button-primary" type="submit">Save interval</button>
+            </form>
+            <div class="section-heading"><div><p class="eyebrow">FOLLOW-UP QUEUE</p><h2>Invoices needing attention</h2></div></div>
+            <div id="finance-reminders" class="finance-reminders"></div>
+          </section>
+        </div>
+        <div class="finance-layout finance-detail-layout">
+          <section class="form-card finance-panel expense-entry-panel">
+            <div class="section-heading"><div><p class="eyebrow">EXPENSE TRACKER</p><h2 id="expense-form-heading">Record an expense</h2></div></div>
+            <p class="finance-help">Record a cost with a clear reason. Linking an invoice is optional; standalone expenses still count toward business profit.</p>
+            <form id="expense-form" class="expense-form">
+              <label>What was this expense for?<input name="description" maxlength="1000" placeholder="e.g. Emergency bearing replacement" required></label>
+              <label>Category<select name="category" required><option value="">Choose a category</option><option>Materials</option><option>Travel</option><option>Labour</option><option>Utilities</option><option>Repairs</option><option>Office</option><option>Miscellaneous</option></select></label>
+              <label>Expense date<input name="expenseDate" type="date" required></label>
+              <label>Amount (Rs.)<input name="amount" type="number" min="0.01" max="1000000000000" step="0.01" inputmode="decimal" placeholder="0.00" required></label>
+              <label class="expense-invoice-field">Link to invoice <span class="optional-label">Optional</span><select name="invoiceId" id="expense-invoice"><option value="">Standalone expense — no invoice</option></select></label>
+              <div class="expense-form-actions"><button class="button button-primary" id="save-expense-button" type="submit">Save expense</button><button class="button button-outline" id="cancel-expense-edit" type="button" hidden>Cancel edit</button></div>
+            </form>
+          </section>
+          <section class="form-card finance-panel expense-breakdown-panel">
+            <div class="section-heading"><div><p class="eyebrow">SPENDING MIX</p><h2>Expenses by category</h2></div></div>
+            <div id="expense-category-chart" class="expense-category-chart"></div>
+          </section>
+        </div>
+        <section class="form-card finance-panel expense-ledger">
+          <div class="section-heading"><div><p class="eyebrow">EXPENSE LEDGER</p><h2>Recent expenses</h2></div><span id="expense-count" class="muted"></span></div>
+          <div class="table-wrap expense-table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Explanation</th><th>Invoice</th><th>Amount</th><th>Actions</th></tr></thead><tbody id="expense-list"></tbody></table></div>
+          <p class="empty-state" id="empty-expenses" hidden>No expenses recorded yet. Add an expense above to start tracking costs.</p>
         </section>
       </section>
 
@@ -89,7 +172,10 @@
       <section id="preview-view" hidden>
         <div id="quotation-workflow" class="quotation-workflow" hidden>
           <div><strong>Quotation approval</strong><span id="quotation-approval-status"></span></div>
-          <button class="button button-outline" id="toggle-quotation-approval" type="button"></button>
+          <div class="quotation-decision-actions">
+            <button class="button button-approve" id="approve-quotation-button" type="button">Approve</button>
+            <button class="button button-reject" id="reject-quotation-button" type="button">Reject</button>
+          </div>
           <div id="quotation-followup-actions" class="quotation-followup-actions" hidden>
             <span>Create a follow-up document from this approved quotation:</span>
             <button class="button button-outline" type="button" data-from-quotation="invoice">Create invoice</button>
@@ -97,11 +183,66 @@
             <button class="button button-outline" type="button" data-from-quotation="service-report">Create service report</button>
           </div>
         </div>
-        <div class="editor-heading preview-controls"><button class="text-button" id="close-preview" type="button">← Back</button><div class="editor-actions"><button class="button button-outline" id="edit-saved-button" type="button" hidden>Edit document</button><button class="button button-primary" id="print-button" type="button">Print / Save as PDF</button></div></div>
+        <div class="editor-heading preview-controls"><button class="text-button" id="close-preview" type="button">← Back</button><div class="editor-actions"><button class="button button-danger" id="delete-saved-button" type="button" hidden>Delete document</button><button class="button button-outline" id="edit-saved-button" type="button" hidden>Edit document</button><button class="button button-primary" id="print-button" type="button">Print / Save as PDF</button></div></div>
+        <section id="invoice-finance-actions" class="invoice-finance-actions preview-controls" hidden>
+          <div><p class="eyebrow">INVOICE PAYMENT</p><h2 id="invoice-payment-status">Unpaid</h2><p id="invoice-payment-summary" class="muted"></p></div>
+          <div id="invoice-payment-history"></div>
+          <div class="invoice-preview-actions">
+            <button class="button button-primary" id="invoice-payment-action" type="button">Record payment</button>
+            <button class="button button-outline" id="invoice-record-expense" type="button">Add expense</button>
+            <button class="button button-warning" id="reset-invoice-payments" type="button" hidden>Mark unpaid</button>
+          </div>
+        </section>
         <div id="saved-print-document" class="print-document"></div>
       </section>
     </main>
   </div>
+  <dialog id="invoice-payment-dialog" class="quick-expense-dialog">
+    <form id="invoice-payment-form" class="quick-expense-form">
+      <div class="section-heading">
+        <div><p class="eyebrow">INVOICE PAYMENT</p><h2>Update invoice payment</h2></div>
+        <button class="text-button" id="close-invoice-payment" type="button" aria-label="Close">✕</button>
+      </div>
+      <p id="quick-payment-invoice" class="quick-expense-invoice"></p>
+      <input name="invoiceId" type="hidden">
+      <div class="payment-mode-options" role="group" aria-label="Payment action">
+        <label class="payment-mode-option"><input name="paymentModeChoice" type="radio" value="full"><span><strong>Fully paid</strong><small>Settle the remaining balance</small></span></label>
+        <label class="payment-mode-option"><input name="paymentModeChoice" type="radio" value="partial"><span><strong>Partial payment</strong><small>Enter the amount received</small></span></label>
+      </div>
+      <div class="quick-expense-grid">
+        <label>Amount received (Rs.)<input name="amount" type="number" min="0.01" max="1000000000000" step="0.01" inputmode="decimal" required></label>
+        <label>Payment date<input name="paidAt" type="date" required></label>
+        <label>Payment method<select name="method" required><option>Bank transfer</option><option>UPI</option><option>Cash</option><option>Cheque</option><option>Card</option><option>Other</option></select></label>
+      </div>
+      <p id="quick-payment-balance" class="quick-expense-invoice"></p>
+      <p id="quick-payment-balance-preview" class="payment-balance-preview" aria-live="polite"></p>
+      <div class="quick-expense-actions">
+        <button class="button button-outline" id="cancel-invoice-payment" type="button">Cancel</button>
+        <button class="button button-primary" id="save-invoice-payment" type="submit">Mark fully paid</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="invoice-expense-dialog" class="quick-expense-dialog">
+    <form id="invoice-quick-expense-form" class="quick-expense-form">
+      <div class="section-heading">
+        <div><p class="eyebrow">INVOICE EXPENSE</p><h2>Add an expense</h2></div>
+        <button class="text-button" id="close-invoice-expense" type="button" aria-label="Close">✕</button>
+      </div>
+      <p id="quick-expense-invoice" class="quick-expense-invoice"></p>
+      <input name="invoiceId" type="hidden">
+      <label>What was this expense for?<input name="description" maxlength="1000" placeholder="e.g. Materials for site work" required></label>
+      <div class="quick-expense-grid">
+        <label>Amount (Rs.)<input name="amount" type="number" min="0.01" max="1000000000000" step="0.01" inputmode="decimal" placeholder="0.00" required></label>
+        <label>Category<select name="category" required><option>Miscellaneous</option><option>Materials</option><option>Travel</option><option>Labour</option><option>Utilities</option><option>Repairs</option><option>Office</option></select></label>
+        <label>Expense date<input name="expenseDate" type="date" required></label>
+      </div>
+      <div class="quick-expense-actions">
+        <button class="button button-outline" id="cancel-invoice-expense" type="button">Cancel</button>
+        <button class="button button-primary" type="submit">Save expense</button>
+      </div>
+    </form>
+  </dialog>
+  <datalist id="product-catalog"></datalist>
   <script src="admin.js" defer></script>
 </body>
 </html>
